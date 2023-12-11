@@ -178,15 +178,13 @@ class MysqlHelper
         $outputFile = fopen($sqlFilePath, 'w');
 
         // 循环每个表，导出结构和数据
-        foreach ($all_tables as $table) {
-            if (!empty($tables) && !in_array($table, $tables)) {
+        foreach ($all_tables as $table) { 
+            if($this->prefix){
+                $istable = str_replace($this->prefix,"",$table);
+            } 
+            if (!empty($tables) && !in_array($istable, $tables)) {
                 continue;
             }
-            //如果设置了表前缀,且传入的表名不包含表前缀,则补上
-            if (!empty($this->prefix) && strpos($table, $this->prefix) !== 0) {
-                $table = $this->prefix . $table;
-            }
-
             // 导出表结构
             fwrite($outputFile, "-- 表结构：$table\n");
             $createTableSQL = $conn->query("SHOW CREATE TABLE $table");
